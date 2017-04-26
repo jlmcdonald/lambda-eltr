@@ -1,0 +1,6 @@
+*.zip
+.babelrc
+bin/*
+.c9/*
+node_modules/*
+config/*

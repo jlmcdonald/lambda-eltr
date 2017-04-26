@@ -1,0 +1,28 @@
+{
+  "name": "lambda-eltr",
+  "version": "0.0.3",
+  "description": "A simple function to watch a bucket and start an AWS elastic transcoder job.",
+  "main": "bin/index.js",
+  "scripts": {
+    "build": "babel src -d bin",
+    "test": "npm run build && mocha --reporter spec --compilers js:babel-core/register",
+    "package": "npm run build && zip -r postrollTranscoder.zip bin/index.js node_modules/aws-sdk node_modules/md5",
+    "setStaging": "aws lambda update-function-configuration --function-name postrollTranscodingJob --environment Variables={BUCKET=dev_bucket,PIPELINE=1485452966929-fx7qsr}",
+    "setProd": "aws lambda update-function-configuration --function-name postrollTranscodingJob --environment Variables={BUCKET=prod_bucket,PIPELINE=1485284561714-gz1adi}",
+    "stage": "npm run package && aws lambda update-function-code --function-name postrollTranscodingJob --zip-file fileb://postrollTranscoder.zip",
+    "publish": "npm run package && npm run setProd && aws lambda update-function-code --function-name postrollTranscodingJob --zip-file fileb://postrollTranscoder.zip --publish && npm run setStaging"
+  },
+  "author": "Jarom McDonald",
+  "dependencies": {
+    "aws-sdk": "^2.7.20",
+    "chai": "^3.5.0",
+    "md5": "^2.2.1",
+    "mocha": "^3.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.22.1",
+    "babel-preset-latest": "^6.16.0",
+    "randomstring": "^1.1.5"
+  }
+}
